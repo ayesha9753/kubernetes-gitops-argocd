@@ -1,0 +1,26 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: dev
+
+resources:
+  - ../../base
+
+namePrefix: dev-
+
+replicas:
+  - name: gitops-demo
+    count: 1
+
+images:
+  - name: ghcr.io/ayesha9753/kubernetes-gitops-argocd
+    newTag: dev
+
+patches:
+  - target:
+      kind: Deployment
+      name: gitops-demo
+    patch: |-
+      - op: replace
+        path: /spec/template/spec/containers/0/env/0/value
+        value: dev

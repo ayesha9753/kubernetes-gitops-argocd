@@ -1,0 +1,27 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: prod
+
+resources:
+  - ../../base
+  - hpa.yaml
+
+namePrefix: prod-
+
+replicas:
+  - name: gitops-demo
+    count: 3
+
+images:
+  - name: ghcr.io/ayesha9753/kubernetes-gitops-argocd
+    newTag: latest
+
+patches:
+  - target:
+      kind: Deployment
+      name: gitops-demo
+    patch: |-
+      - op: replace
+        path: /spec/template/spec/containers/0/env/0/value
+        value: prod
